@@ -24,11 +24,19 @@ Vehicle.Powertrain.CombustionEngine.EngineCoolant.Temperature
 
 ### For Users
 
-Download the pre-built binary (when available) and run:
+**Install via Go:**
+
+```bash
+go install github.com/brojonat/vssss/cmd/vssss@latest
+```
+
+**Or download a pre-built binary** from [Releases](https://github.com/brojonat/vssss/releases).
+
+**Run:**
 
 ```bash
 export OPENAI_API_KEY=sk-...
-./vssss "battery charge level"
+vssss "battery charge level"
 ```
 
 **Using an alternative OpenAI-compatible provider:**
