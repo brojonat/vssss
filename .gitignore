@@ -1,0 +1,29 @@
+# Environment and secrets
+.env
+
+# Generated files
+signals.db
+vssss
+dist/
+vss.json
+vss.csv
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
