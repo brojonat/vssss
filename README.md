@@ -31,6 +31,14 @@ export OPENAI_API_KEY=sk-...
 ./vssss "battery charge level"
 ```
 
+**Using an alternative OpenAI-compatible provider:**
+
+```bash
+export OPENAI_API_KEY=your-api-key
+export OPENAI_BASE_URL=https://your-provider.com/v1
+./vssss "battery charge level"
+```
+
 ### For Developers
 
 **Prerequisites:**
@@ -143,6 +151,13 @@ vssss/
 - [sqlite-vec](https://github.com/asg017/sqlite-vec) - Vector search extension
 - [openai-go](https://github.com/openai/openai-go) - OpenAI API client
 - [urfave/cli](https://github.com/urfave/cli) - CLI framework
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `OPENAI_API_KEY` | Yes | Your OpenAI API key |
+| `OPENAI_BASE_URL` | No | Custom API endpoint for OpenAI-compatible providers |
 
 ## Output Format
 
