@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VSS Instrument Cluster</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #0a0a12;
+      color: #eee;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      color: #4a90d9;
+      margin-bottom: 20px;
+    }
+    .cluster-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    #cluster-svg {
+      max-width: 100%;
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(0,100,200,0.2);
+    }
+    #cluster-svg [data-vss] {
+      cursor: pointer;
+    }
+    #cluster-svg .warning-light:hover {
+      filter: brightness(1.5);
+    }
+    #cluster-svg .warning-light.on {
+      filter: drop-shadow(0 0 10px currentColor) brightness(1.2);
+    }
+    #cluster-svg .warning-light.on .warning-icon {
+      fill: currentColor;
+    }
+    #cluster-svg .warning-light.on line,
+    #cluster-svg .warning-light.on path,
+    #cluster-svg .warning-light.on circle,
+    #cluster-svg .warning-light.on rect,
+    #cluster-svg .warning-light.on ellipse,
+    #cluster-svg .warning-light.on polygon {
+      stroke: currentColor;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      max-width: 800px;
+    }
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      background: #1a2a4a;
+      color: #fff;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #2a4a6a;
+    }
+    .btn.danger {
+      background: #4a1a1a;
+    }
+    .btn.danger:hover {
+      background: #6a2a2a;
+    }
+    .btn.success {
+      background: #1a4a2a;
+    }
+    .btn.success:hover {
+      background: #2a6a3a;
+    }
+    .info-panel {
+      background: #111;
+      border-radius: 8px;
+      padding: 15px 20px;
+      max-width: 800px;
+      width: 100%;
+    }
+    .info-panel h3 {
+      margin: 0 0 10px 0;
+      color: #4a90d9;
+      font-size: 14px;
+    }
+    .signal-info {
+      font-family: monospace;
+      font-size: 13px;
+      color: #0f0;
+    }
+    .signal-desc {
+      color: #888;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="cluster-container">
+    <h1>Instrument Cluster</h1>
+    <div id="svg-container"></div>
+
+    <div class="controls">
+      <button class="btn" onclick="toggleLight('turn-left')">Left Turn</button>
+      <button class="btn" onclick="toggleLight('turn-right')">Right Turn</button>
+      <button class="btn" onclick="toggleLight('high-beam')">High Beam</button>
+      <button class="btn" onclick="toggleLight('parking-lights')">Parking</button>
+      <button class="btn" onclick="toggleLight('fog-lights')">Fog</button>
+      <button class="btn danger" onclick="toggleLight('hazard')">Hazard</button>
+      <button class="btn success" onclick="toggleLight('cruise')">Cruise</button>
+    </div>
+
+    <div class="controls">
+      <button class="btn danger" onclick="toggleLight('check-engine')">Check Engine</button>
+      <button class="btn danger" onclick="toggleLight('oil-pressure')">Oil</button>
+      <button class="btn danger" onclick="toggleLight('battery')">Battery</button>
+      <button class="btn danger" onclick="toggleLight('temp-warning')">Temp</button>
+      <button class="btn danger" onclick="toggleLight('brake-warning')">Brake</button>
+      <button class="btn danger" onclick="toggleLight('abs')">ABS</button>
+      <button class="btn danger" onclick="toggleLight('airbag')">Airbag</button>
+      <button class="btn danger" onclick="toggleLight('seatbelt')">Seatbelt</button>
+      <button class="btn danger" onclick="toggleLight('tpms')">TPMS</button>
+      <button class="btn danger" onclick="toggleLight('door-ajar')">Door</button>
+    </div>
+
+    <div class="controls">
+      <button class="btn" onclick="demoStartup()">Startup Sequence</button>
+      <button class="btn danger" onclick="demoPanic()">Panic Mode</button>
+      <button class="btn success" onclick="clearAll()">All Off</button>
+    </div>
+
+    <div class="info-panel">
+      <h3>Selected Signal</h3>
+      <div class="signal-info" id="selected-signal">Click a gauge or warning light</div>
+      <div class="signal-desc" id="selected-desc"></div>
+    </div>
+  </div>
+
+  <script>
+    const signalDescriptions = {
+      'Vehicle.Speed': 'Current vehicle speed',
+      'Vehicle.Powertrain.CombustionEngine.Speed': 'Engine RPM',
+      'Vehicle.Powertrain.FuelSystem.Level': 'Fuel tank level (0-100%)',
+      'Vehicle.Powertrain.CombustionEngine.EngineCoolant.Temperature': 'Engine coolant temperature',
+      'Vehicle.TraveledDistance': 'Total distance traveled (odometer)',
+      'Vehicle.TripMeterReading': 'Trip meter distance',
+      'Vehicle.Exterior.AirTemperature': 'Outside air temperature',
+      'Vehicle.Body.Lights.DirectionIndicator.Left.IsSignaling': 'Left turn signal active',
+      'Vehicle.Body.Lights.DirectionIndicator.Right.IsSignaling': 'Right turn signal active',
+      'Vehicle.Body.Lights.Beam.High.IsOn': 'High beam headlights on',
+      'Vehicle.Body.Lights.Running.IsOn': 'Daytime running/parking lights on',
+      'Vehicle.Body.Lights.Fog.Front.IsOn': 'Front fog lights on',
+      'Vehicle.Body.Lights.Hazard.IsSignaling': 'Hazard lights active',
+      'Vehicle.ADAS.CruiseControl.IsActive': 'Cruise control engaged',
+      'Vehicle.OBD.Status': 'Check engine / malfunction indicator',
+      'Vehicle.Powertrain.CombustionEngine.OilPressureLow': 'Low oil pressure warning',
+      'Vehicle.Powertrain.TractionBattery.StateOfCharge.Low': 'Low battery warning',
+      'Vehicle.Powertrain.CombustionEngine.EngineCoolant.TemperatureHigh': 'Engine overheating',
+      'Vehicle.Chassis.Brake.IsWarning': 'Brake system warning',
+      'Vehicle.Chassis.Brake.ABS.IsWarning': 'ABS malfunction',
+      'Vehicle.Cabin.Airbag.IsWarning': 'Airbag system warning',
+      'Vehicle.Cabin.Seat.Row1.DriverSide.IsBelted': 'Driver seatbelt not fastened',
+      'Vehicle.Chassis.Axle.Row1.Wheel.Left.Tire.IsPressureLow': 'Low tire pressure (TPMS)',
+      'Vehicle.Cabin.Door.Row1.DriverSide.IsOpen': 'Door ajar',
+    };
+
+    fetch('cluster.svg')
+      .then(r => r.text())
+      .then(svg => {
+        document.getElementById('svg-container').innerHTML = svg;
+        document.querySelector('svg').id = 'cluster-svg';
+        initInteractions();
+      });
+
+    function initInteractions() {
+      document.querySelectorAll('[data-vss]').forEach(el => {
+        el.addEventListener('click', () => {
+          const vss = el.dataset.vss;
+          document.getElementById('selected-signal').textContent = vss;
+          document.getElementById('selected-desc').textContent = signalDescriptions[vss] || '';
+
+          // Toggle if it's a warning light
+          if (el.classList.contains('warning-light')) {
+            el.classList.toggle('on');
+          }
+        });
+      });
+    }
+
+    function toggleLight(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        const light = el.querySelector('.warning-light') || el;
+        light.classList.toggle('on');
+
+        const vss = el.dataset.vss;
+        if (vss) {
+          document.getElementById('selected-signal').textContent = vss;
+          document.getElementById('selected-desc').textContent = signalDescriptions[vss] || '';
+        }
+      }
+    }
+
+    function clearAll() {
+      document.querySelectorAll('.warning-light').forEach(el => {
+        el.classList.remove('on');
+      });
+    }
+
+    function demoStartup() {
+      clearAll();
+      const lights = document.querySelectorAll('.warning-light');
+      let delay = 0;
+
+      // Turn all on
+      lights.forEach(light => {
+        setTimeout(() => light.classList.add('on'), delay);
+        delay += 50;
+      });
+
+      // Turn all off after 2 seconds
+      setTimeout(() => {
+        lights.forEach((light, i) => {
+          setTimeout(() => light.classList.remove('on'), i * 50);
+        });
+      }, 2000);
+    }
+
+    function demoPanic() {
+      clearAll();
+      ['check-engine', 'oil-pressure', 'battery', 'temp-warning', 'brake-warning', 'abs'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          const light = el.querySelector('.warning-light') || el;
+          light.classList.add('on');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

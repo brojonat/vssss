@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VSS Signal Visualizer</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #1a1a2e;
+      color: #eee;
+      display: flex;
+      gap: 20px;
+      min-height: 100vh;
+    }
+    .panel {
+      background: #16213e;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .viz-panel {
+      flex: 0 0 auto;
+    }
+    .info-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    h2 {
+      margin: 0 0 15px 0;
+      color: #4a90d9;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    #vehicle-svg {
+      display: block;
+    }
+    #vehicle-svg .zone {
+      fill: transparent;
+      stroke: #444;
+      stroke-dasharray: 4 2;
+      cursor: pointer;
+      transition: fill 0.2s, stroke 0.2s;
+    }
+    #vehicle-svg .zone:hover {
+      fill: rgba(100, 100, 255, 0.2);
+      stroke: #88f;
+    }
+    #vehicle-svg .zone.active {
+      fill: rgba(255, 204, 0, 0.4);
+      stroke: #ff9900;
+    }
+    #vehicle-svg .zone.proximity-near {
+      fill: rgba(255, 68, 68, 0.5);
+      stroke: #f00;
+    }
+    #vehicle-svg .zone.proximity-mid {
+      fill: rgba(255, 170, 0, 0.4);
+      stroke: #fa0;
+    }
+    #vehicle-svg .zone.proximity-far {
+      fill: rgba(68, 170, 68, 0.3);
+      stroke: #4a4;
+    }
+    #vehicle-svg [data-vss] {
+      cursor: pointer;
+      transition: filter 0.2s, stroke 0.2s;
+    }
+    #vehicle-svg [data-vss]:hover {
+      filter: brightness(1.3);
+    }
+    #vehicle-svg [data-vss].active {
+      filter: brightness(1.5) saturate(1.5);
+      stroke: #ff6b6b;
+      stroke-width: 2;
+    }
+    .signal-info {
+      background: #0f0f23;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: monospace;
+    }
+    .signal-info .path {
+      color: #4a90d9;
+      font-size: 14px;
+      word-break: break-all;
+    }
+    .signal-info .desc {
+      color: #888;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+    .signal-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .signal-item {
+      background: #0f0f23;
+      padding: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 12px;
+      transition: background 0.2s;
+    }
+    .signal-item:hover {
+      background: #1f1f43;
+    }
+    .signal-item.active {
+      background: #2a4a6a;
+      border-left: 3px solid #4a90d9;
+    }
+    .search {
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background: #0f0f23;
+      color: #eee;
+      font-size: 14px;
+      width: 100%;
+    }
+    .search:focus {
+      outline: 2px solid #4a90d9;
+    }
+    .demo-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .demo-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      background: #4a90d9;
+      color: white;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .demo-btn:hover {
+      background: #6ab0f9;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel viz-panel">
+    <h2>Vehicle View</h2>
+    <div id="svg-container"></div>
+  </div>
+
+  <div class="panel info-panel">
+    <div>
+      <h2>Selected Signal</h2>
+      <div class="signal-info">
+        <div class="path" id="selected-path">Click a region or signal</div>
+        <div class="desc" id="selected-desc"></div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Demo</h2>
+      <div class="demo-controls">
+        <button class="demo-btn" onclick="demoProximity()">Simulate Parking Sensors</button>
+        <button class="demo-btn" onclick="demoEngine()">Highlight Powertrain</button>
+        <button class="demo-btn" onclick="clearAll()">Clear All</button>
+      </div>
+    </div>
+
+    <div style="flex:1; display:flex; flex-direction:column; min-height:0;">
+      <h2>Signals</h2>
+      <input type="text" class="search" placeholder="Filter signals..." oninput="filterSignals(this.value)">
+      <div class="signal-list" id="signal-list"></div>
+    </div>
+  </div>
+
+  <script>
+    // Load SVG inline so we can manipulate it
+    fetch('vehicle.svg')
+      .then(r => r.text())
+      .then(svg => {
+        document.getElementById('svg-container').innerHTML = svg;
+        document.querySelector('svg').id = 'vehicle-svg';
+        initializeInteractions();
+      });
+
+    // VSS signal descriptions (subset for demo)
+    const signalDescriptions = {
+      'Vehicle.Body': 'All body components',
+      'Vehicle.Body.Trunk': 'Trunk status and control',
+      'Vehicle.Body.Hood': 'Hood/bonnet status',
+      'Vehicle.Body.Mirrors.DriverSide': 'Driver side mirror position and status',
+      'Vehicle.Body.Mirrors.PassengerSide': 'Passenger side mirror position and status',
+      'Vehicle.Body.Lights.Beam.Low': 'Low beam headlights',
+      'Vehicle.Body.Lights.Brake': 'Brake lights',
+      'Vehicle.Cabin': 'Cabin signals (HVAC, seats, lights)',
+      'Vehicle.Cabin.Infotainment': 'Infotainment system',
+      'Vehicle.Powertrain': 'Engine/motor and transmission',
+      'Vehicle.Chassis.Axle.Row1.Wheel.Left': 'Front left wheel (speed, pressure, temp)',
+      'Vehicle.Chassis.Axle.Row1.Wheel.Right': 'Front right wheel (speed, pressure, temp)',
+      'Vehicle.Chassis.Axle.Row2.Wheel.Left': 'Rear left wheel (speed, pressure, temp)',
+      'Vehicle.Chassis.Axle.Row2.Wheel.Right': 'Rear right wheel (speed, pressure, temp)',
+      'Vehicle.ADAS.ObstacleDetection.FrontLeft': 'Front left proximity sensor',
+      'Vehicle.ADAS.ObstacleDetection.FrontCenter': 'Front center proximity sensor',
+      'Vehicle.ADAS.ObstacleDetection.FrontRight': 'Front right proximity sensor',
+      'Vehicle.ADAS.ObstacleDetection.RearLeft': 'Rear left proximity sensor',
+      'Vehicle.ADAS.ObstacleDetection.RearCenter': 'Rear center proximity sensor',
+      'Vehicle.ADAS.ObstacleDetection.RearRight': 'Rear right proximity sensor',
+      'Vehicle.ADAS.ObstacleDetection.SideLeft.Front': 'Left front blind spot sensor',
+      'Vehicle.ADAS.ObstacleDetection.SideLeft.Rear': 'Left rear blind spot sensor',
+      'Vehicle.ADAS.ObstacleDetection.SideRight.Front': 'Right front blind spot sensor',
+      'Vehicle.ADAS.ObstacleDetection.SideRight.Rear': 'Right rear blind spot sensor',
+    };
+
+    function initializeInteractions() {
+      const svg = document.getElementById('vehicle-svg');
+      const elements = svg.querySelectorAll('[data-vss]');
+
+      // Build signal list
+      const list = document.getElementById('signal-list');
+      const signals = Array.from(elements).map(el => el.dataset.vss).sort();
+
+      signals.forEach(vss => {
+        const item = document.createElement('div');
+        item.className = 'signal-item';
+        item.textContent = vss;
+        item.onclick = () => selectSignal(vss);
+        list.appendChild(item);
+      });
+
+      // Click handlers for SVG elements
+      elements.forEach(el => {
+        el.addEventListener('click', () => {
+          selectSignal(el.dataset.vss);
+        });
+      });
+    }
+
+    function selectSignal(vssPath) {
+      // Clear previous selection
+      document.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
+
+      // Highlight SVG element
+      const svgEl = document.querySelector(`[data-vss="${vssPath}"]`);
+      if (svgEl) svgEl.classList.add('active');
+
+      // Highlight list item
+      document.querySelectorAll('.signal-item').forEach(item => {
+        if (item.textContent === vssPath) item.classList.add('active');
+      });
+
+      // Update info panel
+      document.getElementById('selected-path').textContent = vssPath;
+      document.getElementById('selected-desc').textContent = signalDescriptions[vssPath] || '';
+    }
+
+    function highlightByVss(vssPath, className = 'active') {
+      const el = document.querySelector(`[data-vss="${vssPath}"]`);
+      if (el) el.classList.add(className);
+    }
+
+    function clearAll() {
+      document.querySelectorAll('[data-vss]').forEach(el => {
+        el.classList.remove('active', 'proximity-near', 'proximity-mid', 'proximity-far');
+      });
+      document.querySelectorAll('.signal-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('selected-path').textContent = 'Click a region or signal';
+      document.getElementById('selected-desc').textContent = '';
+    }
+
+    function demoProximity() {
+      clearAll();
+      // Simulate parking sensors detecting obstacles at various distances
+      highlightByVss('Vehicle.ADAS.ObstacleDetection.RearCenter', 'proximity-near');
+      highlightByVss('Vehicle.ADAS.ObstacleDetection.RearLeft', 'proximity-mid');
+      highlightByVss('Vehicle.ADAS.ObstacleDetection.RearRight', 'proximity-far');
+      highlightByVss('Vehicle.ADAS.ObstacleDetection.SideRight.Rear', 'proximity-mid');
+      document.getElementById('selected-path').textContent = 'Parking Sensor Demo';
+      document.getElementById('selected-desc').textContent = 'Red = near, Orange = mid, Green = far';
+    }
+
+    function demoEngine() {
+      clearAll();
+      highlightByVss('Vehicle.Powertrain', 'active');
+      selectSignal('Vehicle.Powertrain');
+    }
+
+    function filterSignals(query) {
+      const items = document.querySelectorAll('.signal-item');
+      const q = query.toLowerCase();
+      items.forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(q) ? 'block' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

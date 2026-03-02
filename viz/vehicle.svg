@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="200" height="400">
+  <defs>
+    <style>
+      .body { fill: #3a3a4a; stroke: #222; stroke-width: 1.5; }
+      .window { fill: #1a2a3a; stroke: #222; stroke-width: 1; }
+      .wheel { fill: #1a1a1a; stroke: #000; stroke-width: 1; }
+      .tire { fill: #2a2a2a; }
+      .headlight { fill: #ffeeaa; stroke: #cca; stroke-width: 0.5; }
+      .taillight { fill: #aa2222; stroke: #661111; stroke-width: 0.5; }
+      .mirror { fill: #3a3a4a; stroke: #222; stroke-width: 1; }
+      .grille { fill: #1a1a1a; stroke: #000; stroke-width: 0.5; }
+      .trim { fill: none; stroke: #555; stroke-width: 0.5; }
+      .zone { fill: transparent; stroke: none; }
+    </style>
+  </defs>
+
+  <!-- Proximity zones (invisible by default, shown on hover/activation) -->
+  <g id="zones">
+    <rect id="zone-front-left" class="zone" x="0" y="0" width="70" height="50" data-vss="Vehicle.ADAS.ObstacleDetection.FrontLeft"/>
+    <rect id="zone-front-center" class="zone" x="70" y="0" width="60" height="50" data-vss="Vehicle.ADAS.ObstacleDetection.FrontCenter"/>
+    <rect id="zone-front-right" class="zone" x="130" y="0" width="70" height="50" data-vss="Vehicle.ADAS.ObstacleDetection.FrontRight"/>
+
+    <rect id="zone-left-front" class="zone" x="0" y="50" width="30" height="100" data-vss="Vehicle.ADAS.ObstacleDetection.SideLeft.Front"/>
+    <rect id="zone-left-rear" class="zone" x="0" y="250" width="30" height="100" data-vss="Vehicle.ADAS.ObstacleDetection.SideLeft.Rear"/>
+
+    <rect id="zone-right-front" class="zone" x="170" y="50" width="30" height="100" data-vss="Vehicle.ADAS.ObstacleDetection.SideRight.Front"/>
+    <rect id="zone-right-rear" class="zone" x="170" y="250" width="30" height="100" data-vss="Vehicle.ADAS.ObstacleDetection.SideRight.Rear"/>
+
+    <rect id="zone-rear-left" class="zone" x="0" y="350" width="70" height="50" data-vss="Vehicle.ADAS.ObstacleDetection.RearLeft"/>
+    <rect id="zone-rear-center" class="zone" x="70" y="350" width="60" height="50" data-vss="Vehicle.ADAS.ObstacleDetection.RearCenter"/>
+    <rect id="zone-rear-right" class="zone" x="130" y="350" width="70" height="50" data-vss="Vehicle.ADAS.ObstacleDetection.RearRight"/>
+  </g>
+
+  <!-- Main body shell -->
+  <g id="vehicle">
+    <!-- Wheels (under body) -->
+    <g id="wheel-fl" data-vss="Vehicle.Chassis.Axle.Row1.Wheel.Left">
+      <rect class="tire" x="28" y="62" width="22" height="45" rx="4"/>
+      <rect class="wheel" x="31" y="67" width="16" height="35" rx="3"/>
+    </g>
+    <g id="wheel-fr" data-vss="Vehicle.Chassis.Axle.Row1.Wheel.Right">
+      <rect class="tire" x="150" y="62" width="22" height="45" rx="4"/>
+      <rect class="wheel" x="153" y="67" width="16" height="35" rx="3"/>
+    </g>
+    <g id="wheel-rl" data-vss="Vehicle.Chassis.Axle.Row2.Wheel.Left">
+      <rect class="tire" x="28" y="285" width="22" height="45" rx="4"/>
+      <rect class="wheel" x="31" y="290" width="16" height="35" rx="3"/>
+    </g>
+    <g id="wheel-rr" data-vss="Vehicle.Chassis.Axle.Row2.Wheel.Right">
+      <rect class="tire" x="150" y="285" width="22" height="45" rx="4"/>
+      <rect class="wheel" x="153" y="290" width="16" height="35" rx="3"/>
+    </g>
+
+    <!-- Body outline -->
+    <path id="body" class="body" data-vss="Vehicle.Body" d="
+      M 45 55
+      Q 35 55 35 70
+      L 35 85
+      Q 32 85 32 90
+      L 32 105
+      Q 32 110 35 110
+      L 35 280
+      Q 32 280 32 285
+      L 32 330
+      Q 32 335 35 335
+      L 35 345
+      Q 35 360 45 360
+      L 155 360
+      Q 165 360 165 345
+      L 165 335
+      Q 168 335 168 330
+      L 168 285
+      Q 168 280 165 280
+      L 165 110
+      Q 168 110 168 105
+      L 168 90
+      Q 168 85 165 85
+      L 165 70
+      Q 165 55 155 55
+      Z
+    "/>
+
+    <!-- Hood / Engine bay -->
+    <path id="hood" class="body" data-vss="Vehicle.Powertrain" d="
+      M 50 58
+      L 150 58
+      Q 158 58 160 65
+      L 160 115
+      Q 155 120 100 120
+      Q 45 120 40 115
+      L 40 65
+      Q 42 58 50 58
+      Z
+    " style="fill: #404050;"/>
+
+    <!-- Grille -->
+    <rect id="grille" class="grille" x="60" y="56" width="80" height="8" rx="2" data-vss="Vehicle.Body.Hood"/>
+
+    <!-- Headlights -->
+    <ellipse id="headlight-l" class="headlight" cx="52" cy="62" rx="8" ry="5" data-vss="Vehicle.Body.Lights.Beam.Low"/>
+    <ellipse id="headlight-r" class="headlight" cx="148" cy="62" rx="8" ry="5" data-vss="Vehicle.Body.Lights.Beam.Low"/>
+
+    <!-- Windshield -->
+    <path id="windshield" class="window" data-vss="Vehicle.Cabin.Infotainment" d="
+      M 50 125
+      L 150 125
+      Q 155 125 155 130
+      L 155 165
+      Q 100 175 45 165
+      L 45 130
+      Q 45 125 50 125
+      Z
+    "/>
+
+    <!-- Roof / Cabin -->
+    <path id="cabin" class="window" data-vss="Vehicle.Cabin" d="
+      M 48 170
+      L 152 170
+      Q 157 170 157 175
+      L 157 240
+      Q 157 245 152 245
+      L 48 245
+      Q 43 245 43 240
+      L 43 175
+      Q 43 170 48 170
+      Z
+    " style="fill: #252535;"/>
+
+    <!-- Rear window -->
+    <path id="rear-window" class="window" data-vss="Vehicle.Cabin" d="
+      M 50 250
+      Q 100 240 150 250
+      L 155 285
+      Q 155 290 150 290
+      L 50 290
+      Q 45 290 45 285
+      Z
+    "/>
+
+    <!-- Trunk -->
+    <path id="trunk" class="body" data-vss="Vehicle.Body.Trunk" d="
+      M 45 295
+      L 155 295
+      Q 160 295 160 300
+      L 160 350
+      Q 160 355 155 355
+      L 45 355
+      Q 40 355 40 350
+      L 40 300
+      Q 40 295 45 295
+      Z
+    " style="fill: #404050;"/>
+
+    <!-- Taillights -->
+    <rect id="taillight-l" class="taillight" x="42" y="345" width="25" height="10" rx="2" data-vss="Vehicle.Body.Lights.Brake"/>
+    <rect id="taillight-r" class="taillight" x="133" y="345" width="25" height="10" rx="2" data-vss="Vehicle.Body.Lights.Brake"/>
+
+    <!-- Side mirrors -->
+    <ellipse id="mirror-l" class="mirror" cx="30" cy="140" rx="8" ry="12" data-vss="Vehicle.Body.Mirrors.DriverSide"/>
+    <ellipse id="mirror-r" class="mirror" cx="170" cy="140" rx="8" ry="12" data-vss="Vehicle.Body.Mirrors.PassengerSide"/>
+
+    <!-- Door lines -->
+    <line class="trim" x1="43" y1="165" x2="43" y2="250"/>
+    <line class="trim" x1="157" y1="165" x2="157" y2="250"/>
+    <line class="trim" x1="43" y1="200" x2="35" y2="200"/>
+    <line class="trim" x1="157" y1="200" x2="165" y2="200"/>
+  </g>
+</svg>
