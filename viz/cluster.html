@@ -32,6 +32,11 @@
     }
     #cluster-svg [data-vss] {
       cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    #cluster-svg .warning-light {
+      touch-action: manipulation;
     }
     #cluster-svg .warning-light:hover {
       filter: brightness(1.5);
@@ -185,16 +190,39 @@
 
     function initInteractions() {
       document.querySelectorAll('[data-vss]').forEach(el => {
-        el.addEventListener('click', () => {
+        const handler = (e) => {
+          e.preventDefault();
           const vss = el.dataset.vss;
           document.getElementById('selected-signal').textContent = vss;
           document.getElementById('selected-desc').textContent = signalDescriptions[vss] || '';
 
           // Toggle if it's a warning light
-          if (el.classList.contains('warning-light')) {
-            el.classList.toggle('on');
+          const light = el.querySelector('.warning-light') || (el.classList.contains('warning-light') ? el : null);
+          if (light) {
+            light.classList.toggle('on');
           }
-        });
+        };
+        el.addEventListener('click', handler);
+        el.addEventListener('touchend', handler, { passive: false });
+      });
+
+      // Also make the warning light circles themselves clickable
+      document.querySelectorAll('.warning-light').forEach(el => {
+        const handler = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          el.classList.toggle('on');
+
+          // Find parent with data-vss
+          const parent = el.closest('[data-vss]');
+          if (parent) {
+            const vss = parent.dataset.vss;
+            document.getElementById('selected-signal').textContent = vss;
+            document.getElementById('selected-desc').textContent = signalDescriptions[vss] || '';
+          }
+        };
+        el.addEventListener('click', handler);
+        el.addEventListener('touchend', handler, { passive: false });
       });
     }
 

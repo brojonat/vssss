@@ -1,68 +1,141 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400">
   <defs>
     <style>
-      .cluster-bg { fill: #0a0a0a; }
-      .gauge-bg { fill: #111; stroke: #333; stroke-width: 2; }
-      .gauge-ring { fill: none; stroke: #222; stroke-width: 8; }
-      .gauge-marks { fill: none; stroke: #444; stroke-width: 2; }
-      .gauge-marks-major { fill: none; stroke: #666; stroke-width: 3; }
-      .gauge-text { fill: #888; font-family: 'Arial', sans-serif; font-size: 12px; }
-      .gauge-value { fill: #fff; font-family: 'Arial', sans-serif; font-size: 28px; font-weight: bold; }
-      .gauge-unit { fill: #666; font-family: 'Arial', sans-serif; font-size: 14px; }
-      .gauge-label { fill: #888; font-family: 'Arial', sans-serif; font-size: 11px; text-transform: uppercase; }
-      .needle { fill: #ff3333; stroke: #aa0000; stroke-width: 1; }
-      .needle-cap { fill: #333; stroke: #222; stroke-width: 1; }
-      .warning-light { stroke: #333; stroke-width: 1; cursor: pointer; transition: fill 0.3s, filter 0.3s; }
-      .warning-light.off { fill: #1a1a1a; }
-      .warning-light.on { filter: drop-shadow(0 0 8px currentColor); }
-      .warning-icon { fill: #1a1a1a; pointer-events: none; }
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&amp;family=Rajdhani:wght@300;400;500;600;700&amp;display=swap');
+
+      .cluster-bg { fill: url(#bg-gradient); }
+      .gauge-bg { fill: url(#gauge-gradient); stroke: #2a2a2a; stroke-width: 2; }
+      .gauge-ring { fill: none; stroke: url(#ring-gradient); stroke-width: 6; }
+      .gauge-ring-glow { fill: none; stroke: rgba(0,180,255,0.15); stroke-width: 12; filter: blur(4px); }
+      .gauge-text { fill: #9aa; font-family: 'Rajdhani', 'Segoe UI', sans-serif; font-size: 13px; font-weight: 500; }
+      .gauge-value { fill: #fff; font-family: 'Orbitron', 'Segoe UI', sans-serif; font-size: 32px; font-weight: 700; }
+      .gauge-unit { fill: #667; font-family: 'Rajdhani', 'Segoe UI', sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 1px; }
+      .gauge-label { fill: #78a; font-family: 'Rajdhani', 'Segoe UI', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; }
+      .needle { fill: url(#needle-gradient); filter: drop-shadow(0 0 6px rgba(255,60,60,0.6)); }
+      .needle-cap { fill: url(#cap-gradient); stroke: #111; stroke-width: 1; }
+      .warning-light { stroke: #2a2a2a; stroke-width: 1; cursor: pointer; transition: all 0.3s ease; }
+      .warning-light.off { fill: #0a0a0a; }
+      .warning-light.on { filter: drop-shadow(0 0 12px currentColor); }
+      .warning-icon { fill: #151515; pointer-events: none; }
       .warning-light.on .warning-icon { fill: currentColor; }
-      .info-display { fill: #001a00; stroke: #333; stroke-width: 1; }
-      .info-text { fill: #00ff00; font-family: 'Courier New', monospace; font-size: 14px; }
-      .fuel-gauge { fill: #111; stroke: #333; stroke-width: 1; }
-      .fuel-level { fill: #00aaff; }
-      .temp-gauge { fill: #111; stroke: #333; stroke-width: 1; }
-      .temp-level { fill: linear-gradient(#00aaff, #ff4444); }
-      .divider { stroke: #222; stroke-width: 1; }
+      .info-display { fill: url(#display-gradient); stroke: #1a3a3a; stroke-width: 1; }
+      .info-text { fill: #00ffcc; font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 400; letter-spacing: 1px; }
+      .fuel-gauge { fill: #0a0a0a; stroke: #2a2a2a; stroke-width: 1; }
+      .fuel-level { fill: url(#fuel-gradient); }
+      .temp-gauge { fill: #0a0a0a; stroke: #2a2a2a; stroke-width: 1; }
+      .temp-level { fill: url(#temp-gradient); }
+      .accent-line { stroke: url(#accent-gradient); stroke-width: 1; opacity: 0.5; }
     </style>
+
+    <!-- Gradients -->
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0d0d0d"/>
+      <stop offset="50%" stop-color="#080808"/>
+      <stop offset="100%" stop-color="#050505"/>
+    </linearGradient>
+
+    <radialGradient id="gauge-gradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#151515"/>
+      <stop offset="70%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#080808"/>
+    </radialGradient>
+
+    <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a1a"/>
+      <stop offset="50%" stop-color="#2a2a2a"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+
+    <linearGradient id="needle-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff4444"/>
+      <stop offset="50%" stop-color="#ff2222"/>
+      <stop offset="100%" stop-color="#cc0000"/>
+    </linearGradient>
+
+    <radialGradient id="cap-gradient" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#444"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </radialGradient>
+
+    <linearGradient id="display-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#001515"/>
+      <stop offset="100%" stop-color="#000a0a"/>
+    </linearGradient>
+
+    <linearGradient id="fuel-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0066aa"/>
+      <stop offset="100%" stop-color="#00aaff"/>
+    </linearGradient>
+
+    <linearGradient id="temp-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0088cc"/>
+      <stop offset="60%" stop-color="#0088cc"/>
+      <stop offset="100%" stop-color="#ff4444"/>
+    </linearGradient>
+
+    <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="transparent"/>
+      <stop offset="50%" stop-color="#00aaff"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+
+    <linearGradient id="digital-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#000"/>
+      <stop offset="50%" stop-color="#050505"/>
+      <stop offset="100%" stop-color="#000"/>
+    </linearGradient>
 
     <!-- Gauge tick marks template -->
     <g id="speed-ticks">
       <!-- Major ticks every 20 mph, minor every 10 -->
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(-135)"/>
-      <line x1="0" y1="-95" x2="0" y2="-88" stroke="#444" stroke-width="2" transform="rotate(-121.5)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(-108)"/>
-      <line x1="0" y1="-95" x2="0" y2="-88" stroke="#444" stroke-width="2" transform="rotate(-94.5)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(-81)"/>
-      <line x1="0" y1="-95" x2="0" y2="-88" stroke="#444" stroke-width="2" transform="rotate(-67.5)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(-54)"/>
-      <line x1="0" y1="-95" x2="0" y2="-88" stroke="#444" stroke-width="2" transform="rotate(-40.5)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(-27)"/>
-      <line x1="0" y1="-95" x2="0" y2="-88" stroke="#444" stroke-width="2" transform="rotate(-13.5)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(0)"/>
-      <line x1="0" y1="-95" x2="0" y2="-88" stroke="#444" stroke-width="2" transform="rotate(13.5)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#ff4444" stroke-width="3" transform="rotate(27)"/>
-      <line x1="0" y1="-95" x2="0" y2="-88" stroke="#ff4444" stroke-width="2" transform="rotate(40.5)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#ff4444" stroke-width="3" transform="rotate(54)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(-135)"/>
+      <line x1="0" y1="-95" x2="0" y2="-86" stroke="#334" stroke-width="1.5" transform="rotate(-121.5)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(-108)"/>
+      <line x1="0" y1="-95" x2="0" y2="-86" stroke="#334" stroke-width="1.5" transform="rotate(-94.5)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(-81)"/>
+      <line x1="0" y1="-95" x2="0" y2="-86" stroke="#334" stroke-width="1.5" transform="rotate(-67.5)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(-54)"/>
+      <line x1="0" y1="-95" x2="0" y2="-86" stroke="#334" stroke-width="1.5" transform="rotate(-40.5)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(-27)"/>
+      <line x1="0" y1="-95" x2="0" y2="-86" stroke="#334" stroke-width="1.5" transform="rotate(-13.5)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(0)"/>
+      <line x1="0" y1="-95" x2="0" y2="-86" stroke="#334" stroke-width="1.5" transform="rotate(13.5)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#ff4444" stroke-width="2" transform="rotate(27)"/>
+      <line x1="0" y1="-95" x2="0" y2="-86" stroke="#ff4444" stroke-width="1.5" transform="rotate(40.5)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#ff4444" stroke-width="2" transform="rotate(54)"/>
     </g>
 
     <g id="rpm-ticks">
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(-135)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(-108)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(-81)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(-54)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(-27)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#666" stroke-width="3" transform="rotate(0)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#ff4444" stroke-width="3" transform="rotate(27)"/>
-      <line x1="0" y1="-95" x2="0" y2="-85" stroke="#ff4444" stroke-width="3" transform="rotate(54)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(-135)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(-108)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(-81)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(-54)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(-27)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#556" stroke-width="2" transform="rotate(0)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#ff4444" stroke-width="2" transform="rotate(27)"/>
+      <line x1="0" y1="-95" x2="0" y2="-82" stroke="#ff4444" stroke-width="2" transform="rotate(54)"/>
     </g>
+
+    <!-- Glow filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
 
   <!-- Background -->
   <rect class="cluster-bg" x="0" y="0" width="800" height="400" rx="20"/>
 
+  <!-- Accent lines -->
+  <line class="accent-line" x1="30" y1="100" x2="280" y2="100"/>
+  <line class="accent-line" x1="520" y1="100" x2="770" y2="100"/>
+
   <!-- Left gauge - Tachometer (RPM) -->
   <g id="tachometer" transform="translate(160, 200)" data-vss="Vehicle.Powertrain.CombustionEngine.Speed">
+    <circle class="gauge-ring-glow" r="100"/>
     <circle class="gauge-bg" r="130"/>
     <circle class="gauge-ring" r="100"/>
     <use href="#rpm-ticks"/>
@@ -74,12 +147,12 @@
     <text class="gauge-text" x="-35" y="-70" text-anchor="middle">3</text>
     <text class="gauge-text" x="15" y="-80" text-anchor="middle">4</text>
     <text class="gauge-text" x="60" y="-60" text-anchor="middle">5</text>
-    <text class="gauge-text" x="80" y="-20" text-anchor="middle" fill="#ff4444">6</text>
-    <text class="gauge-text" x="85" y="30" text-anchor="middle" fill="#ff4444">7</text>
+    <text class="gauge-text" x="80" y="-20" text-anchor="middle" fill="#ff6666">6</text>
+    <text class="gauge-text" x="85" y="30" text-anchor="middle" fill="#ff6666">7</text>
 
     <!-- Needle (pointing to ~3000 RPM) -->
-    <polygon class="needle" points="0,-80 -4,10 0,15 4,10" transform="rotate(-27)"/>
-    <circle class="needle-cap" r="12"/>
+    <polygon class="needle" points="0,-80 -3,10 0,15 3,10" transform="rotate(-27)"/>
+    <circle class="needle-cap" r="14"/>
 
     <text class="gauge-label" x="0" y="50" text-anchor="middle">RPM</text>
     <text class="gauge-unit" x="0" y="68" text-anchor="middle">x1000</text>
@@ -87,6 +160,7 @@
 
   <!-- Right gauge - Speedometer -->
   <g id="speedometer" transform="translate(640, 200)" data-vss="Vehicle.Speed">
+    <circle class="gauge-ring-glow" r="100"/>
     <circle class="gauge-bg" r="130"/>
     <circle class="gauge-ring" r="100"/>
     <use href="#speed-ticks"/>
@@ -98,110 +172,113 @@
     <text class="gauge-text" x="-50" y="-60" text-anchor="middle">60</text>
     <text class="gauge-text" x="0" y="-78" text-anchor="middle">80</text>
     <text class="gauge-text" x="50" y="-60" text-anchor="middle">100</text>
-    <text class="gauge-text" x="80" y="-25" text-anchor="middle" fill="#ff4444">120</text>
-    <text class="gauge-text" x="90" y="25" text-anchor="middle" fill="#ff4444">140</text>
-    <text class="gauge-text" x="75" y="75" text-anchor="middle" fill="#ff4444">160</text>
+    <text class="gauge-text" x="80" y="-25" text-anchor="middle" fill="#ff6666">120</text>
+    <text class="gauge-text" x="90" y="25" text-anchor="middle" fill="#ff6666">140</text>
+    <text class="gauge-text" x="75" y="75" text-anchor="middle" fill="#ff6666">160</text>
 
     <!-- Digital speed display -->
-    <rect x="-35" y="15" width="70" height="35" rx="3" fill="#000" stroke="#333"/>
-    <text class="gauge-value" x="0" y="42" text-anchor="middle">65</text>
+    <rect x="-40" y="10" width="80" height="40" rx="4" fill="url(#digital-bg)" stroke="#1a3a3a" stroke-width="1"/>
+    <text class="gauge-value" x="0" y="42" text-anchor="middle" filter="url(#glow)">65</text>
 
     <!-- Needle (pointing to ~65 mph) -->
-    <polygon class="needle" points="0,-80 -4,10 0,15 4,10" transform="rotate(-27)"/>
-    <circle class="needle-cap" r="12"/>
+    <polygon class="needle" points="0,-80 -3,10 0,15 3,10" transform="rotate(-27)"/>
+    <circle class="needle-cap" r="14"/>
 
-    <text class="gauge-label" x="0" y="70" text-anchor="middle">MPH</text>
+    <text class="gauge-label" x="0" y="72" text-anchor="middle">MPH</text>
   </g>
 
   <!-- Center info display -->
   <g id="info-display" transform="translate(400, 180)">
-    <rect class="info-display" x="-100" y="-60" width="200" height="120" rx="5"/>
+    <rect class="info-display" x="-110" y="-65" width="220" height="130" rx="6"/>
+
+    <!-- Subtle inner glow -->
+    <rect x="-108" y="-63" width="216" height="126" rx="5" fill="none" stroke="rgba(0,255,200,0.1)" stroke-width="1"/>
 
     <!-- Odometer -->
-    <text class="info-text" x="0" y="-35" text-anchor="middle" data-vss="Vehicle.TraveledDistance">ODO: 45,892 mi</text>
+    <text class="info-text" x="0" y="-38" text-anchor="middle" data-vss="Vehicle.TraveledDistance">ODO  45,892 MI</text>
 
     <!-- Trip -->
-    <text class="info-text" x="0" y="-10" text-anchor="middle" data-vss="Vehicle.TripMeterReading">TRIP: 234.5 mi</text>
+    <text class="info-text" x="0" y="-12" text-anchor="middle" data-vss="Vehicle.TripMeterReading">TRIP  234.5 MI</text>
 
     <!-- Outside temp -->
-    <text class="info-text" x="0" y="15" text-anchor="middle" data-vss="Vehicle.Exterior.AirTemperature">OUTSIDE: 72°F</text>
+    <text class="info-text" x="0" y="14" text-anchor="middle" data-vss="Vehicle.Exterior.AirTemperature">OUTSIDE  72°F</text>
 
     <!-- Time -->
-    <text class="info-text" x="0" y="40" text-anchor="middle">10:34 AM</text>
+    <text class="info-text" x="0" y="44" text-anchor="middle" style="font-size: 16px; font-weight: 500;">10:34</text>
   </g>
 
   <!-- Fuel gauge (left of center) -->
   <g id="fuel-gauge" transform="translate(280, 320)" data-vss="Vehicle.Powertrain.FuelSystem.Level">
-    <rect class="fuel-gauge" x="-50" y="-15" width="100" height="30" rx="3"/>
-    <rect class="fuel-level" x="-47" y="-12" width="70" height="24" rx="2"/>
-    <text class="gauge-text" x="-55" y="5" text-anchor="end">E</text>
-    <text class="gauge-text" x="55" y="5" text-anchor="start">F</text>
+    <rect class="fuel-gauge" x="-50" y="-15" width="100" height="30" rx="4"/>
+    <rect class="fuel-level" x="-47" y="-12" width="70" height="24" rx="3"/>
+    <text class="gauge-text" x="-55" y="5" text-anchor="end" style="font-size: 11px;">E</text>
+    <text class="gauge-text" x="55" y="5" text-anchor="start" style="font-size: 11px;">F</text>
     <!-- Fuel pump icon -->
-    <text x="0" y="-25" text-anchor="middle" fill="#888" font-size="16">⛽</text>
+    <text x="0" y="-28" text-anchor="middle" fill="#667" font-size="14" font-family="'Rajdhani', sans-serif">FUEL</text>
   </g>
 
   <!-- Temperature gauge (right of center) -->
   <g id="temp-gauge" transform="translate(520, 320)" data-vss="Vehicle.Powertrain.CombustionEngine.EngineCoolant.Temperature">
-    <rect class="temp-gauge" x="-50" y="-15" width="100" height="30" rx="3"/>
-    <rect x="-47" y="-12" width="50" height="24" rx="2" fill="#00aaff"/>
-    <text class="gauge-text" x="-55" y="5" text-anchor="end" fill="#00aaff">C</text>
-    <text class="gauge-text" x="55" y="5" text-anchor="start" fill="#ff4444">H</text>
-    <!-- Thermometer icon -->
-    <text x="0" y="-25" text-anchor="middle" fill="#888" font-size="16">🌡</text>
+    <rect class="temp-gauge" x="-50" y="-15" width="100" height="30" rx="4"/>
+    <rect x="-47" y="-12" width="50" height="24" rx="3" fill="url(#temp-gradient)"/>
+    <text class="gauge-text" x="-55" y="5" text-anchor="end" style="font-size: 11px; fill: #0099cc;">C</text>
+    <text class="gauge-text" x="55" y="5" text-anchor="start" style="font-size: 11px; fill: #ff6666;">H</text>
+    <!-- Temp label -->
+    <text x="0" y="-28" text-anchor="middle" fill="#667" font-size="14" font-family="'Rajdhani', sans-serif">TEMP</text>
   </g>
 
   <!-- Warning lights row 1 (top) -->
   <g id="warning-lights-top" transform="translate(400, 60)">
     <!-- Turn signals -->
     <g id="turn-left" transform="translate(-180, 0)" data-vss="Vehicle.Body.Lights.DirectionIndicator.Left.IsSignaling">
-      <circle class="warning-light off" r="18" style="color: #00ff00;"/>
-      <polygon class="warning-icon" points="-8,0 4,-8 4,-4 10,-4 10,4 4,4 4,8" fill="#00ff00"/>
+      <circle class="warning-light off" r="18" style="color: #00ff88;"/>
+      <polygon class="warning-icon" points="-8,0 4,-8 4,-4 10,-4 10,4 4,4 4,8" fill="#00ff88"/>
     </g>
 
     <g id="turn-right" transform="translate(180, 0)" data-vss="Vehicle.Body.Lights.DirectionIndicator.Right.IsSignaling">
-      <circle class="warning-light off" r="18" style="color: #00ff00;"/>
-      <polygon class="warning-icon" points="8,0 -4,-8 -4,-4 -10,-4 -10,4 -4,4 -4,8" fill="#00ff00"/>
+      <circle class="warning-light off" r="18" style="color: #00ff88;"/>
+      <polygon class="warning-icon" points="8,0 -4,-8 -4,-4 -10,-4 -10,4 -4,4 -4,8" fill="#00ff88"/>
     </g>
 
     <!-- High beam -->
     <g id="high-beam" transform="translate(-120, 0)" data-vss="Vehicle.Body.Lights.Beam.High.IsOn">
-      <circle class="warning-light off" r="18" style="color: #0088ff;"/>
-      <ellipse class="warning-icon" cx="-3" cy="0" rx="6" ry="4" fill="#0088ff"/>
-      <line x1="5" y1="-6" x2="12" y2="-6" stroke="#0088ff" stroke-width="2" class="warning-icon"/>
-      <line x1="5" y1="-2" x2="12" y2="-2" stroke="#0088ff" stroke-width="2" class="warning-icon"/>
-      <line x1="5" y1="2" x2="12" y2="2" stroke="#0088ff" stroke-width="2" class="warning-icon"/>
-      <line x1="5" y1="6" x2="12" y2="6" stroke="#0088ff" stroke-width="2" class="warning-icon"/>
+      <circle class="warning-light off" r="18" style="color: #00aaff;"/>
+      <ellipse class="warning-icon" cx="-3" cy="0" rx="6" ry="4" fill="#00aaff"/>
+      <line x1="5" y1="-6" x2="12" y2="-6" stroke="#00aaff" stroke-width="2" class="warning-icon"/>
+      <line x1="5" y1="-2" x2="12" y2="-2" stroke="#00aaff" stroke-width="2" class="warning-icon"/>
+      <line x1="5" y1="2" x2="12" y2="2" stroke="#00aaff" stroke-width="2" class="warning-icon"/>
+      <line x1="5" y1="6" x2="12" y2="6" stroke="#00aaff" stroke-width="2" class="warning-icon"/>
     </g>
 
     <!-- Parking/position lights -->
     <g id="parking-lights" transform="translate(-60, 0)" data-vss="Vehicle.Body.Lights.Running.IsOn">
-      <circle class="warning-light off" r="18" style="color: #00aa00;"/>
-      <ellipse class="warning-icon" cx="0" cy="0" rx="5" ry="4" fill="#00aa00"/>
-      <line x1="-8" y1="-3" x2="-12" y2="-5" stroke="#00aa00" stroke-width="2" class="warning-icon"/>
-      <line x1="-8" y1="3" x2="-12" y2="5" stroke="#00aa00" stroke-width="2" class="warning-icon"/>
-      <line x1="8" y1="-3" x2="12" y2="-5" stroke="#00aa00" stroke-width="2" class="warning-icon"/>
-      <line x1="8" y1="3" x2="12" y2="5" stroke="#00aa00" stroke-width="2" class="warning-icon"/>
+      <circle class="warning-light off" r="18" style="color: #00cc66;"/>
+      <ellipse class="warning-icon" cx="0" cy="0" rx="5" ry="4" fill="#00cc66"/>
+      <line x1="-8" y1="-3" x2="-12" y2="-5" stroke="#00cc66" stroke-width="2" class="warning-icon"/>
+      <line x1="-8" y1="3" x2="-12" y2="5" stroke="#00cc66" stroke-width="2" class="warning-icon"/>
+      <line x1="8" y1="-3" x2="12" y2="-5" stroke="#00cc66" stroke-width="2" class="warning-icon"/>
+      <line x1="8" y1="3" x2="12" y2="5" stroke="#00cc66" stroke-width="2" class="warning-icon"/>
     </g>
 
     <!-- Fog lights -->
     <g id="fog-lights" transform="translate(0, 0)" data-vss="Vehicle.Body.Lights.Fog.Front.IsOn">
-      <circle class="warning-light off" r="18" style="color: #ffaa00;"/>
-      <ellipse class="warning-icon" cx="-3" cy="0" rx="5" ry="4" fill="#ffaa00"/>
-      <path class="warning-icon" d="M4,-6 Q10,-6 8,0 Q10,6 4,6" stroke="#ffaa00" stroke-width="2" fill="none"/>
+      <circle class="warning-light off" r="18" style="color: #ffcc00;"/>
+      <ellipse class="warning-icon" cx="-3" cy="0" rx="5" ry="4" fill="#ffcc00"/>
+      <path class="warning-icon" d="M4,-6 Q10,-6 8,0 Q10,6 4,6" stroke="#ffcc00" stroke-width="2" fill="none"/>
     </g>
 
     <!-- Hazard -->
     <g id="hazard" transform="translate(60, 0)" data-vss="Vehicle.Body.Lights.Hazard.IsSignaling">
-      <circle class="warning-light off" r="18" style="color: #ff0000;"/>
-      <polygon class="warning-icon" points="0,-10 10,8 -10,8" fill="none" stroke="#ff0000" stroke-width="2"/>
-      <text class="warning-icon" x="0" y="5" text-anchor="middle" fill="#ff0000" font-size="12" font-weight="bold">!</text>
+      <circle class="warning-light off" r="18" style="color: #ff3333;"/>
+      <polygon class="warning-icon" points="0,-10 10,8 -10,8" fill="none" stroke="#ff3333" stroke-width="2"/>
+      <text class="warning-icon" x="0" y="5" text-anchor="middle" fill="#ff3333" font-size="12" font-weight="bold" font-family="'Rajdhani', sans-serif">!</text>
     </g>
 
     <!-- Cruise control -->
     <g id="cruise" transform="translate(120, 0)" data-vss="Vehicle.ADAS.CruiseControl.IsActive">
-      <circle class="warning-light off" r="18" style="color: #00ff00;"/>
-      <circle class="warning-icon" cx="0" cy="0" r="8" fill="none" stroke="#00ff00" stroke-width="2"/>
-      <path class="warning-icon" d="M-4,3 L0,-2 L4,3" fill="none" stroke="#00ff00" stroke-width="2"/>
+      <circle class="warning-light off" r="18" style="color: #00ff88;"/>
+      <circle class="warning-icon" cx="0" cy="0" r="8" fill="none" stroke="#00ff88" stroke-width="2"/>
+      <path class="warning-icon" d="M-4,3 L0,-2 L4,3" fill="none" stroke="#00ff88" stroke-width="2"/>
     </g>
   </g>
 
@@ -215,51 +292,51 @@
 
     <!-- Oil pressure -->
     <g id="oil-pressure" transform="translate(-112, 0)" data-vss="Vehicle.Powertrain.CombustionEngine.OilPressureLow">
-      <circle class="warning-light off" r="16" style="color: #ff0000;"/>
-      <ellipse class="warning-icon" cx="0" cy="2" rx="8" ry="5" fill="#ff0000" transform="scale(0.8)"/>
-      <path class="warning-icon" d="M0,-6 Q-2,-8 0,-8 Q2,-8 0,-6" fill="#ff0000" transform="scale(0.8)"/>
+      <circle class="warning-light off" r="16" style="color: #ff3333;"/>
+      <ellipse class="warning-icon" cx="0" cy="2" rx="8" ry="5" fill="#ff3333" transform="scale(0.8)"/>
+      <path class="warning-icon" d="M0,-6 Q-2,-8 0,-8 Q2,-8 0,-6" fill="#ff3333" transform="scale(0.8)"/>
     </g>
 
     <!-- Battery -->
     <g id="battery" transform="translate(-64, 0)" data-vss="Vehicle.Powertrain.TractionBattery.StateOfCharge.Low">
-      <circle class="warning-light off" r="16" style="color: #ff0000;"/>
-      <rect class="warning-icon" x="-8" y="-4" width="16" height="10" rx="1" fill="#ff0000" transform="scale(0.8)"/>
-      <rect class="warning-icon" x="-2" y="-6" width="4" height="3" fill="#ff0000" transform="scale(0.8)"/>
-      <text class="warning-icon" x="-4" y="3" fill="#1a1a1a" font-size="8" font-weight="bold">+</text>
-      <text class="warning-icon" x="2" y="3" fill="#1a1a1a" font-size="8" font-weight="bold">−</text>
+      <circle class="warning-light off" r="16" style="color: #ff3333;"/>
+      <rect class="warning-icon" x="-8" y="-4" width="16" height="10" rx="1" fill="#ff3333" transform="scale(0.8)"/>
+      <rect class="warning-icon" x="-2" y="-6" width="4" height="3" fill="#ff3333" transform="scale(0.8)"/>
+      <text class="warning-icon" x="-4" y="3" fill="#0a0a0a" font-size="8" font-weight="bold" font-family="'Rajdhani', sans-serif">+</text>
+      <text class="warning-icon" x="2" y="3" fill="#0a0a0a" font-size="8" font-weight="bold" font-family="'Rajdhani', sans-serif">-</text>
     </g>
 
     <!-- Temperature warning -->
     <g id="temp-warning" transform="translate(-16, 0)" data-vss="Vehicle.Powertrain.CombustionEngine.EngineCoolant.TemperatureHigh">
-      <circle class="warning-light off" r="16" style="color: #ff0000;"/>
-      <path class="warning-icon" d="M0,-8 L0,2 M-4,4 Q0,10 4,4" fill="none" stroke="#ff0000" stroke-width="2" transform="scale(0.8)"/>
+      <circle class="warning-light off" r="16" style="color: #ff3333;"/>
+      <path class="warning-icon" d="M0,-8 L0,2 M-4,4 Q0,10 4,4" fill="none" stroke="#ff3333" stroke-width="2" transform="scale(0.8)"/>
     </g>
 
     <!-- Brake warning -->
     <g id="brake-warning" transform="translate(32, 0)" data-vss="Vehicle.Chassis.Brake.IsWarning">
-      <circle class="warning-light off" r="16" style="color: #ff0000;"/>
-      <circle class="warning-icon" cx="0" cy="0" r="7" fill="none" stroke="#ff0000" stroke-width="2" transform="scale(0.8)"/>
-      <text class="warning-icon" x="0" y="4" text-anchor="middle" fill="#ff0000" font-size="10" font-weight="bold">!</text>
+      <circle class="warning-light off" r="16" style="color: #ff3333;"/>
+      <circle class="warning-icon" cx="0" cy="0" r="7" fill="none" stroke="#ff3333" stroke-width="2" transform="scale(0.8)"/>
+      <text class="warning-icon" x="0" y="4" text-anchor="middle" fill="#ff3333" font-size="10" font-weight="bold" font-family="'Rajdhani', sans-serif">!</text>
     </g>
 
     <!-- ABS -->
     <g id="abs" transform="translate(80, 0)" data-vss="Vehicle.Chassis.Brake.ABS.IsWarning">
       <circle class="warning-light off" r="16" style="color: #ffaa00;"/>
-      <text class="warning-icon" x="0" y="4" text-anchor="middle" fill="#ffaa00" font-size="10" font-weight="bold">ABS</text>
+      <text class="warning-icon" x="0" y="4" text-anchor="middle" fill="#ffaa00" font-size="9" font-weight="700" font-family="'Orbitron', sans-serif">ABS</text>
     </g>
 
     <!-- Airbag -->
     <g id="airbag" transform="translate(128, 0)" data-vss="Vehicle.Cabin.Airbag.IsWarning">
-      <circle class="warning-light off" r="16" style="color: #ff0000;"/>
-      <circle class="warning-icon" cx="0" cy="-2" r="4" fill="#ff0000" transform="scale(0.8)"/>
-      <ellipse class="warning-icon" cx="0" cy="6" rx="6" ry="4" fill="#ff0000" transform="scale(0.8)"/>
+      <circle class="warning-light off" r="16" style="color: #ff3333;"/>
+      <circle class="warning-icon" cx="0" cy="-2" r="4" fill="#ff3333" transform="scale(0.8)"/>
+      <ellipse class="warning-icon" cx="0" cy="6" rx="6" ry="4" fill="#ff3333" transform="scale(0.8)"/>
     </g>
 
     <!-- Seatbelt -->
     <g id="seatbelt" transform="translate(176, 0)" data-vss="Vehicle.Cabin.Seat.Row1.DriverSide.IsBelted">
-      <circle class="warning-light off" r="16" style="color: #ff0000;"/>
-      <circle class="warning-icon" cx="0" cy="-5" r="3" fill="#ff0000" transform="scale(0.8)"/>
-      <path class="warning-icon" d="M-4,0 L0,8 L4,0 M-6,2 L6,2" fill="none" stroke="#ff0000" stroke-width="2" transform="scale(0.8)"/>
+      <circle class="warning-light off" r="16" style="color: #ff3333;"/>
+      <circle class="warning-icon" cx="0" cy="-5" r="3" fill="#ff3333" transform="scale(0.8)"/>
+      <path class="warning-icon" d="M-4,0 L0,8 L4,0 M-6,2 L6,2" fill="none" stroke="#ff3333" stroke-width="2" transform="scale(0.8)"/>
     </g>
 
     <!-- TPMS -->
@@ -271,9 +348,9 @@
 
     <!-- Door ajar -->
     <g id="door-ajar" transform="translate(224, 0)" data-vss="Vehicle.Cabin.Door.Row1.DriverSide.IsOpen">
-      <circle class="warning-light off" r="16" style="color: #ff0000;"/>
-      <rect class="warning-icon" x="-6" y="-6" width="10" height="12" rx="1" fill="none" stroke="#ff0000" stroke-width="2" transform="scale(0.8)"/>
-      <path class="warning-icon" d="M4,-4 L8,-2 L8,4 L4,6" fill="none" stroke="#ff0000" stroke-width="2" transform="scale(0.8)"/>
+      <circle class="warning-light off" r="16" style="color: #ff3333;"/>
+      <rect class="warning-icon" x="-6" y="-6" width="10" height="12" rx="1" fill="none" stroke="#ff3333" stroke-width="2" transform="scale(0.8)"/>
+      <path class="warning-icon" d="M4,-4 L8,-2 L8,4 L4,6" fill="none" stroke="#ff3333" stroke-width="2" transform="scale(0.8)"/>
     </g>
   </g>
 </svg>
