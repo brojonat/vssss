@@ -11,6 +11,7 @@ import (
 	"github.com/brojonat/vssss/internal/db"
 	"github.com/brojonat/vssss/internal/search"
 	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/option"
 	"github.com/urfave/cli/v3"
 )
 
@@ -69,7 +70,11 @@ func run(ctx context.Context, cmd *cli.Command) error {
 	defer store.Close()
 
 	// Generate query embedding
-	client := openai.NewClient()
+	var opts []option.RequestOption
+	if baseURL := os.Getenv("OPENAI_BASE_URL"); baseURL != "" {
+		opts = append(opts, option.WithBaseURL(baseURL))
+	}
+	client := openai.NewClient(opts...)
 	embedder := search.NewEmbedder(client, "")
 
 	queryEmb, err := embedder.Embed(ctx, query)
