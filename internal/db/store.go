@@ -8,6 +8,7 @@ import (
 	sqlite_vec "github.com/asg017/sqlite-vec-go-bindings/ncruces"
 	_ "github.com/asg017/sqlite-vec-go-bindings/ncruces" // replaces go-sqlite3/embed
 	_ "github.com/ncruces/go-sqlite3/driver"
+	"github.com/ncruces/go-sqlite3/vfs/memdb"
 )
 
 // Store wraps database operations with vector search capabilities
@@ -20,6 +21,19 @@ func Open(path string) (*Store, error) {
 	conn, err := sql.Open("sqlite3", path)
 	if err != nil {
 		return nil, fmt.Errorf("open db: %w", err)
+	}
+	return &Store{
+		conn:    conn,
+		queries: New(conn),
+	}, nil
+}
+
+// OpenMem opens a database from bytes in memory using the memdb VFS
+func OpenMem(name string, data []byte) (*Store, error) {
+	memdb.Create(name, data)
+	conn, err := sql.Open("sqlite3", "file:/"+name+"?vfs=memdb")
+	if err != nil {
+		return nil, fmt.Errorf("open memdb: %w", err)
 	}
 	return &Store{
 		conn:    conn,
