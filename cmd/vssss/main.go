@@ -50,8 +50,20 @@ func run(ctx context.Context, cmd *cli.Command) error {
 		return fmt.Errorf("OPENAI_API_KEY environment variable required")
 	}
 
-	// Open embedded database from memory
-	store, err := db.OpenMem("signals.db", vssss.SignalsDB)
+	// Write embedded DB to temp file
+	tmpFile, err := os.CreateTemp("", "vssss-*.db")
+	if err != nil {
+		return fmt.Errorf("create temp file: %w", err)
+	}
+	defer os.Remove(tmpFile.Name())
+
+	if _, err := tmpFile.Write(vssss.SignalsDB); err != nil {
+		return fmt.Errorf("write temp db: %w", err)
+	}
+	tmpFile.Close()
+
+	// Open database
+	store, err := db.Open(tmpFile.Name())
 	if err != nil {
 		return fmt.Errorf("open db: %w", err)
 	}
